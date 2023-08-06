@@ -1,0 +1,24 @@
+.title{
+    text-align: center;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 10px;;
+}
+.full{
+    background-color: rgb(130, 229, 130);
+    
+}
+.img{
+    display: block;
+    width: 50px;
+    margin-left: 100px;
+    border: 2px solid red;
+    border-radius: 20px;
+   
+    
+}
+.desciption{
+    font-size: medium;
+    margin-top: 10px;
+    margin-bottom: 5px;;
+}
