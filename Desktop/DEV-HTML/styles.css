@@ -1,25 +1,29 @@
-.title{
-    text-align: center;
-    font-weight: bold;
-    margin-top: 20px;
-    margin-bottom: 10px;;
-}
+
 .full{
-    background-color: rgb(130, 229, 130);
-    
+    width: 400px;
+    justify-content: space-around;
+    border-bottom: solid 6px palevioletred;
+    padding: 20px;
+    margin: 100px;
+    display: flex;
+    background-color: rgb(249, 220, 177);
+    border-radius: 10px;
 }
 .img{
-    display: block;
-    width: 50px;
-    margin-left: 100px;
-    border: 2px solid red;
-    border-radius: 20px;
-    margin-right: 100px;
-   
-    
+
+    width: 120px;
+    border: solid 1px red;
+    border-radius: 10px;       
 }
 .desciption{
+    text-shadow: 0 0 3px #f9c805;
     font-size: medium;
-    margin-top: 10px;
-    margin-bottom: 5px;;
+    font-family: sans-serif;
+    font-size: medium;
+    text-align: center;
+}
+.decode{
+
+    font-weight: lighter;
+    font-style: italic;
 }
