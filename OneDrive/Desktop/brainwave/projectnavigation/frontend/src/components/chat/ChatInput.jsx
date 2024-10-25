@@ -10,7 +10,9 @@ const ChatInput = ({ onSend }) => {
   const [message, setMessage] = useState('');
   
   const { language, imageUrl, setImageUrl,imageUploaded, setImageUploaded } = useContext(LanguageContext);
-
+  const handleSendtext = async ()=>{
+    
+  }
   const handleSend = async () => {
     if (message.trim() || imageUploaded) {
       try {
@@ -36,8 +38,8 @@ const ChatInput = ({ onSend }) => {
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      const url = URL.createObjectURL(file); // Create a URL from the image file
-      setImageUrl(url); // Store the image URL in useState
+      const url = URL.createObjectURL(file);  
+      setImageUrl(url);  
 
       const formData = new FormData();
       formData.append('image', file);
@@ -56,11 +58,15 @@ const ChatInput = ({ onSend }) => {
           placeholder="Type your message..."
           className="flex-1 p-2 border rounded-lg"
         />
+         <button onClick={handleSendtext} className="ml-2 p-2 text-blue-500 hover:text-blue-700">
+          <FaArrowCircleUp size={30} />
+        </button>
         <input
           type="file"
           onChange={handleImageUpload}
           className="ml-2"
         />
+        
         <button onClick={handleSend} className="ml-2 p-2 text-blue-500 hover:text-blue-700">
           <FaArrowCircleUp size={30} />
         </button>
