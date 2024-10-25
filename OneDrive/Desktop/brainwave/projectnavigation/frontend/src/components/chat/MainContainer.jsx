@@ -1,197 +1,194 @@
-import React, { useState,useContext } from 'react';
-// import CommentCard from './CommentCard';
-import ChatInput from './ChatInput';
+import React, { useState, useContext, useEffect } from 'react';
 import ChatArea from './ChatArea';
-// import ProductCard from './ProductCard';
 import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';
-// import {TfiWrite} from 'react-icons/tfi';
-import MyIcon from './assets/logo';
-import { TranslateToAny } from '../../assets/helper';
+import { FaArrowCircleUp } from "react-icons/fa";
 import { LanguageContext } from '../../context/LanguageContext';
-import axios from 'axios';
-import { useEffect } from 'react';
- 
+
 async function createChatSession(apiKey, externalUserId) {
   const response = await fetch('https://api.on-demand.io/chat/v1/sessions', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'apikey': apiKey
-      },
-      body: JSON.stringify({
-          pluginIds: [],
-          externalUserId: externalUserId
-      })
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': apiKey
+    },
+    body: JSON.stringify({
+      pluginIds: [],
+      externalUserId: externalUserId
+    })
   });
 
   if (!response.ok) {
-      throw new Error('Failed to create chat session');
+    throw new Error('Failed to create chat session');
   }
 
   const data = await response.json();
-  return data.data.id; // Extract session ID
+  return data.data.id;
 }
 
-// Function to submit a query using the session ID
 async function submitQuery(apiKey, sessionId, query) {
   const response = await fetch(`https://api.on-demand.io/chat/v1/sessions/${sessionId}/query`, {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'apikey': apiKey
-      },
-      body: JSON.stringify({
-          endpointId: 'predefined-openai-gpt4o',
-          query: query,
-          pluginIds: ['plugin-1712327325', 'plugin-1713962163'],
-          responseMode: 'sync'
-      })
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': apiKey
+    },
+    body: JSON.stringify({
+      endpointId: 'predefined-openai-gpt4o',
+      query: query,
+      pluginIds: ['plugin-1712327325', 'plugin-1713962163'],
+      responseMode: 'sync'
+    })
   });
 
   if (!response.ok) {
-      throw new Error('Failed to submit query');
+    throw new Error('Failed to submit query');
   }
 
   const data = await response.json();
   return data;
 }
 
-// Example usage
-
-
- 
 const MainContainer = () => {
   const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const { language, imageUrl, setImageUrl,imageUploaded, setImageUploaded } = useContext(LanguageContext);
-
-  const handleSend = async (message) => {
-    setMessages([...messages, { text: message, isUser: true }]);
-    setLoading(true); // Start loading
-    
-    try {
-      let response;
-      if (imageUploaded) {
-        // console.log(imageUploaded)
-        // const apiKey = 'app-GSuiWyYx93Mt0ujyJ8dPQzrJ'; // Replace with your actual API key
-        // const data = {
-        //   inputs: {},
-        //   query: message,
-        //   response_mode: "blocking",
-        //   conversation_id: "",
-        //   user: "abc-123",
-        //   files: [
-        //     {
-        //       type: "image",
-        //       transfer_method: "remote_url",
-        //       url: "https://cloud.dify.ai/logo/logo-site.png",
-        //     },
-        //   ],
-        // };
+  const [inputmssg, setInputMssg] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [file,setImagePreviewUrl ] = useState([]);
+  const url = 'https://abf0-2401-4900-838f-e94a-2480-70c4-7f15-9e98.ngrok-free.app/upload_image/';
+  const query = 'hey is it done';
+  // useEffect(() => {
+    const handleSendImage = async () => {
+      // if (!uploadedImage) {
+      //   console.error('No image uploaded');
+      //   return;
+      // }
   
-        // // Make the axios POST request
-        // response = await axios.post('https://api.dify.ai/v1/chat-messages', data, {
-        //   headers: {
-        //     'Authorization': `Bearer ${apiKey}`,
-        //     'Content-Type': 'application/json',
-        //   },
-        // });
+      // if (!file) {
+      //   alert("Please select a file first.");
+      //   return;
+      // }
+        console.log("hi");
+      const formData = new FormData();
+      formData.append("file", file);
   
-        // // Check if the response is successful
-        // console.log(response);
-        // // if (response.status !== 200) {
-        // //   throw new Error('API request failed');
-        // // }
-  
-        // // console.log('Response:', response.data.answer);
-        // // const modelResponse = response.data.answer;
-        const modelResponse = (
-          <div className="flex">
-            <div className='p-1 w-2%'><MyIcon className="p-2"/></div>
-            <div className='w-98%'>
-              A museum is an institution dedicated to the collection, preservation, exhibition, and interpretation of objects, artifacts, and works of art that hold cultural, historical, scientific, or artistic significance. Museums serve as public spaces where people can explore and learn about various aspects of human history, the natural world, or creative expression. 
-            </div>
-
-            <div>{imageUrl && <img src={imageUrl} alt="Uploaded preview" className="mt-2 max-w-xs" />}</div>
-          </div>
-        );
-
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { text: modelResponse, isUser: false },
-        ]);
-      } else {
-        response = await fetch('http://192.168.43.91:5000/predict', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ message }),
+      try {
+        const response = await fetch(url , {
+          method:'POST',
+          // headers: {
+          //   "Content-Type": "multipart/form-data",
+          // },
+          body: formData
         });
-  
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-  
-        const data = await response.json();
-        const modelResponse = (
-          <div className="flex">
-            <div className='p-1 w-2%'><MyIcon className="p-2"/></div>
-            <div className='w-98%'>
-              {data.answer} 
-            </div>
-          </div>
-        );
-  
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { text: modelResponse, isUser: false },
-        ]);
+          const data = await response.json() ;
+          console.log(data.data.extractedText)
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { input: 'image input', output: data.data.extractedText }
+          ]);
+        // Set the returned image URL
+        // setImageUrl(response.data.image_url);
+        console.log(data)
+      } catch (error) {
+        console.error("Error uploading the image", error);
+        // alert("Failed to upload image");
       }
-    } catch (error) {
-      console.error('Error fetching model response:', error);
+    };
+  
+    // handleSendImage(); // Call the async function
+  // }, [uploadedImage]); // Dependency array includes uploadedImage if it's necessary to trigger this effect
+  
+  
+  // const handleSendImage = async () => {
+  //   if (!uploadedImage) {
+  //     console.error('No image uploaded');
+  //     return;
+  //   }
+
+  //   try {
+  //     const requestOptions = {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify(query) // Pass image URL to backend
+  //     };
+
+  //     const response = await fetch(url, requestOptions);
+  //     const data = await response.json();
+  //     console.log(data);
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //   }
+  // };
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    console.log(file);
+    console.log("akldjf")
+    if (file) {
+      setUploadedImage(file);
+      const url = URL.createObjectURL(file); // Use the file directly here
+      setImagePreviewUrl(file);
+      console.log("Blob URL:", url);
+    }
+    console.log(file);
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { input: 'image input', output: 'this is a temple like figure which symbolises southern indian glory and hence it might be a nice idea to submit it' }
+    ]);
+    
+  };
+  const handleSendtext = async () => {
+    const apiKey = 'QYB6bZd7llKZnjImNfsWvyhMim0Yz0RP';
+    const externalUserId = 'arihantjain';
+
+    try {
+      const sessionId = await createChatSession(apiKey, externalUserId);
+      const response = await submitQuery(apiKey, sessionId, inputmssg);
+      const answer = response.data.answer;
+      
+      // Update message state with both input and output
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: 'Network issues or server error', isUser: false },
+        { input: inputmssg, output: answer }
       ]);
-    } finally {
-      setLoading(false); // Stop loading
+      setInputMssg(''); // Clear input message
+    } catch (error) {
+      console.error(error);
     }
   };
-  useEffect(()=>{
-    (async () => {
-      const apiKey = 'QYB6bZd7llKZnjImNfsWvyhMim0Yz0RP';
-      const externalUserId = 'arihantjain';
-      const query = 'generate me a code in c++ to print hello world';
-    
-      try {
-          const sessionId = await createChatSession(apiKey, externalUserId);
-          const response = await submitQuery(apiKey, sessionId, query);
-          console.log(response);
-      } catch (error) {
-          console.error(error);
-      }
-    })();
-  },[]);
 
   return (
     <div className="flex flex-col md:flex-row p-6 gap-6 min-h-screen">
       <div className="flex flex-col w-full md:w-1/4">
         <LeftPanel />
       </div>
-      {/* Middle Column: Main Chat Area and Input */}
       <div className="flex flex-col w-full md:w-2/4">
         <ChatArea messages={messages} />
-        {loading ? (
-          <div className="flex justify-center items-center p-4">Loading...</div>
-        ) : (
-          <ChatInput onSend={handleSend} />
-        )}
+        <div className="flex items-center p-2 bg-white border-t border-gray-300 rounded-lg mt-1 shadow-sm">
+          <input
+            type="text"
+            value={inputmssg}
+            onChange={(e) => setInputMssg(e.target.value)}
+            placeholder="Type your message..."
+            className="flex-1 p-2 border rounded-lg"
+          />
+          <button onClick={handleSendtext} className="ml-2 p-2 text-blue-500 hover:text-blue-700">
+            <FaArrowCircleUp size={30} />
+          </button>
+          <input
+          type="file"
+           accept="image/*"
+          onChange={handleImageChange}
+          className="ml-2"
+        />
+        <button className="ml-2 p-2 text-blue-500 hover:text-blue-700" onClick={handleSendImage}>
+          <FaArrowCircleUp size={30}  />
+        </button>
+        </div>
       </div>
-      {/* Right Column: Model Output */}
       <div className="flex flex-col w-full md:w-1/4">
-        <RightPanel />
+      <RightPanel imageurl = {file}/>
       </div>
     </div>
   );
