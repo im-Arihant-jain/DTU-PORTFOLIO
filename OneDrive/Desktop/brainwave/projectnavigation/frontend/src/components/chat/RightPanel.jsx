@@ -8,7 +8,7 @@ const RightPanel = () => {
         overflow: 'auto',
         scrollbarWidth: 'none', /* Firefox */
         msOverflowStyle: 'none', /* IE and Edge */
-      }} className="flex flex-col items-center p-4 bg-[#06038D] w-full h-full rounded-lg shadow-md">
+      }} className="flex flex-col items-center p-4 w-full h-full rounded-lg shadow-md bg-gradient-to-b from-[#004AAD] to-[#5DE0E6]">
       {/* <div className="flex flex-col w-full md:w-1/4"> */}
         <ProductCard
           title="Elephant Museum"
